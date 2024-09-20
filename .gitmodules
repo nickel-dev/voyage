@@ -1,3 +1,3 @@
-[submodule "source/base_layer"]
-	path = source/base_layer
-	url = https://github.com/nickel-dev/base_layer
+[submodule "source/base"]
+	path = source/base
+	url = https://github.com/nickel-dev/base
