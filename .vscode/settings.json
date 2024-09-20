@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "string.h": "c",
+        "context.h": "c",
+        "macros.h": "c",
+        "stb_image.h": "c"
+    }
+}
