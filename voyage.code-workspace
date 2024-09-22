@@ -1,0 +1,15 @@
+{
+    "folders": [
+        {
+            "path": "./"
+        },
+    ],
+    "settings": {
+		"files.associations": {
+            "README": "txt",
+            "LICENSE": "txt",
+            "*.c": "c",
+            "*.h": "c"
+        }
+    }
+}

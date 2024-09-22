@@ -67,12 +67,17 @@ mat_ortho2d(f32 left, f32 right, f32 bottom, f32 top, f32 znear, f32 zfar) {
 }
 
 Mat
-mat_translate(Mat m, const Vec3 t)
-{
+mat_make_translation(const Vec3 t) {
+    Mat m = mat_scalar(1.0);
     m.columns[3][0] = t.x;
     m.columns[3][1] = t.y;
     m.columns[3][2] = t.z;
     return m;
+}
+
+inline Mat
+mat_translate(Mat m, const Vec3 t) {
+    return mat_mul(m, mat_make_translation(t));
 }
 
 Mat

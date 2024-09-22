@@ -1,0 +1,20 @@
+README - Voyage Engine
+
+//**********************************************************
+// Date: September 22nd 2024 9:37 am
+// Creator: Daniel Nickel
+// Notice: Copyright (C) Daniel Nickel, All Rights Reserved.
+//**********************************************************
+
+Voyage Engine is a 2D general purpose C game engine with custom standard library.
+It is build on my custom base layer which you can find on https://github.com/nickel-dev/base.
+This game engine is a project I am constantly working on.
+The main inpirations for it are:
+ - oogabooga: https://github.com/alpinestudios/oogabooga
+ - DOOM: https://github.com/id-Software/DOOM
+ - Sokol: https://github.com/floooh/sokol
+ - SDL: https://github.com/libsdl-org/SDL
+
+Have fun!
+
+*Nickel*

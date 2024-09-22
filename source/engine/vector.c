@@ -106,15 +106,4 @@ GENERATE_VecNt(2)
 GENERATE_VecNt(3)
 GENERATE_VecNt(4)
 
-// source: https://stackoverflow.com/questions/3723846/convert-from-hex-color-to-rgb-struct-in-c
-inline Vec4i32
-v4_hex(i64 hex) {
-  Vec4i32 c;
-  c.x = ((hex >> 32) & 0xFF) / 255; // Extract the RR byte
-  c.y = ((hex >> 16) & 0xFF) / 255; // Extract the RR byte
-  c.z = ((hex >> 8) & 0xFF) / 255; // Extract the GG byte
-  c.w = ((hex) & 0xFF) / 255; // Extract the AA byte
-  return c;
-}
-
 #endif // __VECTOR_H_
