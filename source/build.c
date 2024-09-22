@@ -1,21 +1,19 @@
+#define STATIC_ARENA_SIZE MEGABYTES(32)
+#define TEMP_ARENA_SIZE MEGABYTES(8)
+
+// These procedures have to be defined by your game.
+void voyage_entry_proc();
+void voyage_update_proc();
+void voyage_render_proc();
+void voyage_exit_proc();
+
+// If you change the name of the procedures above, you have to change them here to.
+// These macros get called by the engine.
+#define VOYAGE_ENTRY_PROC  voyage_entry_proc
+#define VOYAGE_UPDATE_PROC voyage_update_proc
+#define VOYAGE_RENDER_PROC voyage_render_proc
+#define VOYAGE_EXIT_PROC   voyage_exit_proc
+
 #include "base/base_inc.h"
-
-#define STATIC_ARENA_SIZE MEGABYTES(256)
-#define TEMP_ARENA_SIZE   MEGABYTES(8)
-
-// The static_arena has to be cleared by the user and is cleared at the end of  the programs lifetime.
-// The temp_arena is automatically cleared at the beginning of every frame.
-global Arena static_arena, temp_arena;
-
-#define GAME_ENTRY_FUNC  void cb_game_entry()
-#define GAME_UPDATE_FUNC void cb_game_update()
-#define GAME_RENDER_FUNC void cb_game_render()
-#define GAME_EXIT_FUNC   void cb_game_exit()
-
-GAME_ENTRY_FUNC;
-GAME_UPDATE_FUNC;
-GAME_RENDER_FUNC;
-GAME_EXIT_FUNC;
-
 #include "engine/engine_inc.h"
 #include "engine/example/entry.c"

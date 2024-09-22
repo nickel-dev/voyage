@@ -99,7 +99,7 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nSh
 
 	gfx.projection = mat_ortho2d(-2, 2, -2, 2, -0.1, 1);
 
-	cb_game_entry();
+	VOYAGE_ENTRY_PROC();
 
 	gfx_init();
     while (!window.should_close) {
@@ -113,12 +113,12 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nSh
 		if (msg.message == WM_QUIT)
 			window.should_close = true;
 		
-		cb_game_update();
+		VOYAGE_UPDATE_PROC();
 
 		glClearColor(0.1, 0.1, 0.1, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		cb_game_render();
+		VOYAGE_RENDER_PROC();
 		
 		glFinish();
 
@@ -126,7 +126,7 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nSh
 		UpdateWindow(window.handle);
 	}
 	
-	cb_game_exit();
+	VOYAGE_EXIT_PROC();
 
 	arena_free(&temp_arena);
 	arena_free(&static_arena);

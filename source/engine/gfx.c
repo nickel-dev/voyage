@@ -30,7 +30,7 @@ gfx_load_shader(const char* vertex_source, const char* fragment_source) {
 
 	// Create vertex shader.
 	vertex = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex, 1, &vertex_source, NULL);
+	glShaderSource(vertex, 1, (const GLchar* const*)&vertex_source, NULL);
 	glCompileShader(vertex);
 	
 	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
@@ -40,7 +40,7 @@ gfx_load_shader(const char* vertex_source, const char* fragment_source) {
 	
 	// Create fragment shader.
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment, 1, &fragment_source, NULL);
+	glShaderSource(fragment, 1, (const GLchar* const*)&fragment_source, NULL);
 	glCompileShader(fragment);
 	
 	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
@@ -118,7 +118,7 @@ gfx_load_sprite(const char* path) {
     const u8* data = stbi_load_from_memory(s.data, s.size, &scale.x, &scale.y, &channel_count, 4);
     assert(data, "Loading sprite failed! path: %s", path);
     Gfx_Sprite result = gfx_create_sprite(data, scale, channel_count);
-	stbi_image_free(data);
+	stbi_image_free((void*)data);
 	
 	return result;
 }
