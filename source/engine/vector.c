@@ -41,6 +41,10 @@
 #define v3_scalar v3f32_scalar
 #define v4_scalar v4f32_scalar
 
+#define vtov2(v) (v2(v.x, v.y))
+#define vtov3(v) (v3(v.x, v.y, v.z))
+#define vtov4(v) (v4(v.x, v.y, v.z, v.w))
+
 // Math
 #define TEMPLATE_v2tOPERATOR(t, o, n) inline intern Vec2##t v2##t##_##n(Vec2##t a, Vec2##t b) {return v2##t(a.x o b.x, a.y o b.y);}
 #define TEMPLATE_v3tOPERATOR(t, o, n) inline intern Vec3##t v3##t##_##n(Vec3##t a, Vec3##t b) {return v3##t(a.x o b.x, a.y o b.y, a.z o a.z);}

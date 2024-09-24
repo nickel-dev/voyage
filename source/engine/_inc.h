@@ -16,7 +16,29 @@
 
 // The static_arena has to be cleared by the user and is cleared at the end of  the programs lifetime.
 // The temp_arena is automatically cleared at the beginning of every frame.
-global Arena static_arena, temp_arena;
+global Arena static_arena;
+global Arena temp_arena;
+
+global struct Os_Window {
+	bool should_close;
+    string title;
+    i32 width, height;
+    i32 x, y;
+    i32 screen_width, screen_height;
+    f32 zoom;
+    Vec3 clear_color;
+#if OS_WINDOWS
+    HWND handle;
+	HDC device;
+#endif
+} window;
+
+global struct Time {
+    f64 now, last, delta;
+    f32 seconds_counter;
+    i32 frame_count, fps;
+} time;
+
 global Input_Profile input;
 
 // Functionality

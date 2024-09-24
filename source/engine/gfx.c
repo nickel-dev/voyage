@@ -113,9 +113,9 @@ gfx_load_sprite(const char* path) {
     Vec2i32 scale;
     i32 channel_count;
 
-
-	string s = file_read_to_string(temp_arena, path);
-    const u8* data = stbi_load_from_memory(s.data, s.size, &scale.x, &scale.y, &channel_count, 4);
+	//string s = file_read_to_string(temp_arena, path);
+	stbi_set_flip_vertically_on_load(true);
+    const u8* data = stbi_load(path, &scale.x, &scale.y, &channel_count, 4);
     assert(data, "Loading sprite failed! path: %s", path);
     Gfx_Sprite result = gfx_create_sprite(data, scale, channel_count);
 	stbi_image_free((void*)data);
@@ -124,16 +124,20 @@ gfx_load_sprite(const char* path) {
 }
 
 void
-gfx_draw_quad(u32 shader, Gfx_Sprite* sprite, Mat proj_mat, Vec3 pos, Vec2 scale, Vec2 atlas_scale, Vec2 atlas_pos, f32 angle) {
+gfx_draw_quad(u32 shader, Gfx_Sprite* sprite, Mat proj_mat, Vec2 pos, Vec2 scale, f32 angle, Vec2 atlas_scale, Vec2 atlas_pos) {
 	if (!shader)
 		shader = gfx.sprite_shader;
 	
+	if (!sprite)
+		glBindTexture(GL_TEXTURE_2D, gfx.error_sprite.id);
+	else
+		glBindTexture(GL_TEXTURE_2D, sprite->id);
+	
 	glUseProgram(shader);
-	glBindTexture(GL_TEXTURE_2D, gfx.error_sprite.id);
 
 	glUniform1f(glGetUniformLocation(shader, "Texture"), 0);
 	glUniformMatrix4fv(glGetUniformLocation(shader, "Projection"), 1, 0, &proj_mat.e[0]);
-	glUniform3f(glGetUniformLocation(shader, "Pos"), pos.x, pos.y, pos.z);
+	glUniform2f(glGetUniformLocation(shader, "Pos"), pos.x, pos.y);
 	glUniform2f(glGetUniformLocation(shader, "Scale"), scale.x, scale.y);
 	glUniform2f(glGetUniformLocation(shader, "TexSize"), gfx.error_sprite.scale.x, gfx.error_sprite.scale.y);
 	glUniform2f(glGetUniformLocation(shader, "AtlasScale"), atlas_scale.x, atlas_scale.y);
@@ -184,7 +188,7 @@ gfx_init() {
 		layout (location = 1) in vec2 aTexCoord;\n\
 		out vec2 texCoord;\n\
 		uniform mat4 Projection;\n\
-		uniform vec3 Pos;\n\
+		uniform vec2 Pos;\n\
 		uniform vec2 Scale;\n\
 		uniform vec2 TexSize;\n\
 		uniform vec2 AtlasScale;\n\
@@ -197,8 +201,8 @@ gfx_init() {
 			return m * v;\n\
 		}\n\
 		void main() {\n\
-			gl_Position = Projection * vec4(vec3(rotate(aPos.xy * Scale, Angle) + Pos.xy, 1.0) * Pos, 1.0);\n\
-			texCoord = (aTexCoord);\n\
+			gl_Position = Projection * vec4(Pos + rotate(aPos.xy * Scale, Angle), 0.0, 1.0);\n\
+			texCoord = (aTexCoord + AtlasPos - vec2(0, 1)) / AtlasScale;\n\
 		}",
 
 		"#version 460 core\n\

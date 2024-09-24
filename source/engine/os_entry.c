@@ -1,14 +1,5 @@
 #if OS_WINDOWS
 
-global struct Os_Windows {
-    string title;
-    i32 width, height;
-    i32 x, y;
-	bool should_close;
-    HWND handle;
-	HDC device;
-} window;
-
 intern LRESULT WINAPI
 window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -24,7 +15,9 @@ window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		
 		case WM_SIZE:
-			glViewport(0, 0, LOWORD(lParam), HIWORD(lParam));
+			window.width = LOWORD(lParam);
+			window.height = HIWORD(lParam);
+			glViewport(0, 0, window.width, window.height);
 			break;
 		
 		case WM_SYSKEYDOWN:
@@ -38,6 +31,15 @@ window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	
 	return DefWindowProc(hwnd, message, wParam, lParam);
+}
+
+intern f64
+win32_get_current_time() {
+    LARGE_INTEGER frequency;
+    LARGE_INTEGER current_time_value;
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&current_time_value);
+    return (f64)current_time_value.QuadPart / frequency.QuadPart;
 }
 
 intern void
@@ -65,6 +67,17 @@ win32_load_opengl(i32 show_code) {
 
 extern int WINAPI
 wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd) {
+	window.should_close = false;
+	window.title = str("Voyage");
+	window.width = 640;
+	window.height = 480;
+	window.screen_width = GetSystemMetrics(SM_CXSCREEN);
+	window.screen_height = GetSystemMetrics(SM_CYSCREEN);
+	window.x = (window.screen_width - window.width) / 2;
+	window.y = (window.screen_height - window.height) / 2;
+	window.zoom = 0.1;
+	window.clear_color = v3(0, 0, 0);
+
 	WNDCLASSEXA wc = {
 		.cbClsExtra = 0,
 		.cbSize = sizeof(wc),
@@ -82,7 +95,7 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nSh
 
     assert(RegisterClassExA(&wc), "");
 
-    window.handle = CreateWindowEx(0, wc.lpszClassName, "Title", WS_OVERLAPPEDWINDOW | WS_EX_TOPMOST, 0, 0, 1600, 900, 0, 0, hInstance, NULL);
+    window.handle = CreateWindowEx(0, wc.lpszClassName, window.title.data, WS_OVERLAPPEDWINDOW | WS_EX_TOPMOST, window.x, window.y, window.width, window.height, 0, 0, hInstance, NULL);
 	assert(window.handle, "CreateWindowEx failed.");
 	window.device = GetDC(window.handle);
 
@@ -91,17 +104,22 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nSh
 	ShowWindow(window.handle, nShowCmd);
 	ShowCursor(TRUE);
 
-    window.should_close = false;
-	MSG msg;
-
 	static_arena = new_arena(MEGABYTES(STATIC_ARENA_SIZE));
 	temp_arena = new_arena(MEGABYTES(TEMP_ARENA_SIZE));
 
-	gfx.projection = mat_ortho2d(-2, 2, -2, 2, -0.1, 1);
+	gfx_init();
+	gfx.projection = mat_ortho2d(-1, 1, -1, 1, -1, 1);
+
+	// Clearing screen, so when the VOYAGE_ENTRY_PROC takes too long, the screen isn't weirdly colored.
+	glClearColor(window.clear_color.x, window.clear_color.y, window.clear_color.z, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glFinish();
 
 	VOYAGE_ENTRY_PROC();
+	
+	time.last = win32_get_current_time();
+	MSG msg;
 
-	gfx_init();
     while (!window.should_close) {
 		arena_clear(&temp_arena);
 
@@ -112,15 +130,35 @@ wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nSh
 
 		if (msg.message == WM_QUIT)
 			window.should_close = true;
-		
+
+		// time
+		{
+			time.now = win32_get_current_time();
+			time.delta = (f64)(time.now - time.last);
+			time.last = time.now;
+			
+			time.seconds_counter += time.delta;
+			time.frame_count += 1;
+			if (time.seconds_counter >= 1.0) {
+				time.fps = time.frame_count;
+				time.seconds_counter = 0.0;
+				time.frame_count = 0;
+			}
+		}
+
 		VOYAGE_UPDATE_PROC();
 
-		glClearColor(0.1, 0.1, 0.1, 1);
+		// Rendering
+		glClearColor(window.clear_color.x, window.clear_color.y, window.clear_color.z, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		VOYAGE_RENDER_PROC();
 		
+		VOYAGE_RENDER_PROC();
+
 		glFinish();
+
+		// End of frame
+		memcpy(input.keys_old, input.keys, sizeof(bool) * 256);
+		memcpy(&input.controller_old, &input.controller, sizeof(Controller_Profile));
 
 		SwapBuffers(window.device);
 		UpdateWindow(window.handle);
