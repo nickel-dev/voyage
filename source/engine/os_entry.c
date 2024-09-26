@@ -24,6 +24,13 @@ window_proc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_KEYDOWN:
 			if (vk_code == VK_ESCAPE)
 				window.should_close = true;
+			
+			input.keys[vk_code] = true;
+			break;
+		
+		case WM_SYSKEYUP:
+		case WM_KEYUP:
+			input.keys[vk_code] = false;
 			break;
 		
 		default:

@@ -141,7 +141,7 @@ gfx_draw_quad(u32 shader, Gfx_Sprite* sprite, Mat proj_mat, Vec2 pos, Vec2 scale
 	glUniform2f(glGetUniformLocation(shader, "Scale"), scale.x, scale.y);
 	glUniform2f(glGetUniformLocation(shader, "TexSize"), gfx.error_sprite.scale.x, gfx.error_sprite.scale.y);
 	glUniform2f(glGetUniformLocation(shader, "AtlasScale"), atlas_scale.x, atlas_scale.y);
-	glUniform2f(glGetUniformLocation(shader, "AtlasPos"), atlas_pos.x, atlas_pos.y);
+	glUniform2f(glGetUniformLocation(shader, "AtlasPos"), atlas_pos.x, -atlas_pos.y);
 	glUniform1f(glGetUniformLocation(shader, "Angle"), angle);
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
