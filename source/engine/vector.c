@@ -105,6 +105,8 @@
     TEMPLATE_VecMath(N, i32)\
     TEMPLATE_VecMath(N, i64)
 
+#define v2_convert(v) v2((f32)v.x, (f32)v.y)
+
 // Generating
 GENERATE_VecNt(2)
 GENERATE_VecNt(3)

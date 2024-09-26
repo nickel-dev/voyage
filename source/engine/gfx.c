@@ -124,7 +124,7 @@ gfx_load_sprite(const char* path) {
 }
 
 void
-gfx_draw_quad(u32 shader, Gfx_Sprite* sprite, Mat proj_mat, Vec2 pos, Vec2 scale, f32 angle, Vec2 atlas_scale, Vec2 atlas_pos) {
+gfx_draw_quad(u32 shader, Gfx_Sprite* sprite, Mat proj_mat, Vec2 pos, Vec2 scale, f32 angle, Vec2 atlas_scale, Vec2i32 atlas_pos) {
 	if (!shader)
 		shader = gfx.sprite_shader;
 	
