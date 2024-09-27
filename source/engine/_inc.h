@@ -13,6 +13,8 @@
 #include "vector.c"
 #include "matrix.c"
 #include "input.c"
+#include "hashmap.c"
+#include "random.c"
 
 // The static_arena has to be cleared by the user and is cleared at the end of  the programs lifetime.
 // The temp_arena is automatically cleared at the beginning of every frame.

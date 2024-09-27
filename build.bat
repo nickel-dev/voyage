@@ -3,7 +3,7 @@
 if not exist build mkdir build
 
 set LIBS=-lgdi32 -luser32 -lshell32 -lopengl32.lib -lkernel32
-set OPTIONS=-fuse-ld=lld -g -O0 -femit-all-decls -Wl,/subsystem:console -Wno-pointer-sign -Wno-format
+set OPTIONS=-fuse-ld=lld -g -O0 -femit-all-decls -Wl,/subsystem:console -Wno-pointer-sign -Wno-format -Wno-int-conversion
 set OUT=%cd%\build\voyage.exe
 
 pushd build

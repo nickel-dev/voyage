@@ -1,10 +1,10 @@
 //
 // Sprites
 //
-global Gfx_Sprite sprites[SPRITE_MAX];
+global Sprite sprites[SPRITE_MAX];
 global Animation animations[ANIM_MAX];
 
-Gfx_Sprite*
+Sprite*
 get_sprite(u32 id) {
     assert(id < SPRITE_MAX, "Sprite id reached over the set limit! limit: %llu", SPRITE_MAX);
     return &sprites[id];
@@ -67,11 +67,11 @@ void
 entity_draw(Entity* e) {
     if (e->tags & ENTITY_TAG_ANIMATED) {
         Animation* anim = get_anim(e->anim);
-        Gfx_Sprite* sprite = get_sprite(anim->sprite);
+        Sprite* sprite = get_sprite(anim->sprite);
         gfx_draw_quad(gfx.sprite_shader, sprite, gfx.projection, e->pos, e->scale, e->angle, v2_div(v2_convert(sprite->scale), v2_convert(anim->frame_size)), anim->frame_index);
     }
     else {
-        Gfx_Sprite* sprite = get_sprite(e->sprite);
+        Sprite* sprite = get_sprite(e->sprite);
         gfx_draw_quad(gfx.sprite_shader, sprite, gfx.projection, e->pos, e->scale, e->angle, v2(1, 1), v2i32(0, 0));
     }
 }

@@ -1,6 +1,3 @@
-#ifndef __VECTOR_H_
-#define __VECTOR_H_
-
 // Types
 #define TEMPLATE_Vec2t(t) \
     typedef union Vec2##t {\
@@ -111,5 +108,3 @@
 GENERATE_VecNt(2)
 GENERATE_VecNt(3)
 GENERATE_VecNt(4)
-
-#endif // __VECTOR_H_

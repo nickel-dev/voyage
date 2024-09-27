@@ -4,6 +4,12 @@
 //
 // Sprites
 //
+// \class Hashmap bucket for sprites
+typedef struct Sprite_Bucket {
+    string key;
+    Sprite value;
+} Sprite_Bucket;
+
 enum Sprite_Id {
     SPRITE_NULL = 0,
     SPRITE_ACTOR,

@@ -1,11 +1,28 @@
 #ifndef __GFX_H_
 #define __GFX_H_
 
-typedef struct Gfx_Sprite {
+typedef struct Sprite {
     Vec2i32 scale;
     i32 channel_count;
     u32 id;
-} Gfx_Sprite;
+} Sprite;
+
+#define GFX_MAX_PARTICLES 512
+typedef struct Gfx_Particle {
+	f32 direction;
+	Vec2 pos;
+} Gfx_Particle;
+
+typedef struct Particle_Emitter {
+	f32 life_time;
+	f32 duration;
+	f32 spread;
+	f32 radius;
+	Vec2 scale;
+	f32 speed;
+	f64 last_time;
+	Gfx_Particle particles[GFX_MAX_PARTICLES];
+} Particle_Emitter;
 
 typedef struct Gfx_Vertex {
     Vec3 pos;
@@ -16,7 +33,7 @@ global struct Gfx_State {
     u32 vao, vbo, ebo; // OpenGL shader objects
 	u32 sprite_shader;
 	Mat projection;
-	Gfx_Sprite error_sprite;
+	Sprite error_sprite;
 } gfx;
 
 // gfx implementation
@@ -66,9 +83,9 @@ gfx_load_shader(const char* vertex_source, const char* fragment_source) {
 	return result;
 }
 
-Gfx_Sprite
+Sprite
 gfx_create_sprite(const u8* data, Vec2i32 scale, i32 channel_count) {
-	Gfx_Sprite sprite;
+	Sprite sprite;
 	sprite.scale = scale;
 	sprite.channel_count = channel_count;
 
@@ -91,7 +108,7 @@ gfx_create_sprite(const u8* data, Vec2i32 scale, i32 channel_count) {
 	return sprite;
 }
 
-inline Gfx_Sprite
+inline Sprite
 gfx_create_sprite_from_v4(Vec4 color) {
 	u8 data[] = {
 		(u8)color.x * 255,
@@ -102,13 +119,13 @@ gfx_create_sprite_from_v4(Vec4 color) {
     return gfx_create_sprite((const u8*)data, v2i32(1, 1), 4);
 }
 
-inline Gfx_Sprite
+inline Sprite
 gfx_create_sprite_from_v4i32(Vec4i32 color) {
 	u8 data[] = {color.x, color.y, color.z, color.w};
     return gfx_create_sprite((const u8*)data, v2i32(1, 1), 4);
 }
 
-Gfx_Sprite
+Sprite
 gfx_load_sprite(const char* path) {
     Vec2i32 scale;
     i32 channel_count;
@@ -117,14 +134,14 @@ gfx_load_sprite(const char* path) {
 	stbi_set_flip_vertically_on_load(true);
     const u8* data = stbi_load(path, &scale.x, &scale.y, &channel_count, 4);
     assert(data, "Loading sprite failed! path: %s", path);
-    Gfx_Sprite result = gfx_create_sprite(data, scale, channel_count);
+    Sprite result = gfx_create_sprite(data, scale, channel_count);
 	stbi_image_free((void*)data);
 	
 	return result;
 }
 
 void
-gfx_draw_quad(u32 shader, Gfx_Sprite* sprite, Mat proj_mat, Vec2 pos, Vec2 scale, f32 angle, Vec2 atlas_scale, Vec2i32 atlas_pos) {
+gfx_draw_quad(u32 shader, Sprite* sprite, Mat proj_mat, Vec2 pos, Vec2 scale, f32 angle, Vec2 atlas_scale, Vec2i32 atlas_pos) {
 	if (!shader)
 		shader = gfx.sprite_shader;
 	
